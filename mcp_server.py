@@ -2,6 +2,7 @@
 
 import os
 from mcp.server.fastmcp import FastMCP
+from mcp.server.transport_security import TransportSecuritySettings
 
 import pysnowball
 
@@ -27,6 +28,10 @@ def create_mcp_server() -> FastMCP:
     mcp = FastMCP(
         "pysnowball",
         instructions="雪球股票数据接口 MCP 服务器，提供 A 股/港股/美股的实时行情、财务数据、基金信息等",
+        streamable_http_path="/",
+        transport_security=TransportSecuritySettings(
+            enable_dns_rebinding_protection=False,
+        ),
     )
 
     # 设置 token
