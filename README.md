@@ -42,6 +42,8 @@ python server.py
 
 ## 部署到 Vercel
 
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fpdone%2Fxqmcp)
+
 1. Fork 本项目到你的 GitHub
 2. 在 [Vercel](https://vercel.com) 导入项目
 3. 添加环境变量：
