@@ -1,0 +1,6 @@
+mcp[cli]>=1.0.0
+pysnowball>=0.1.8
+uvicorn>=0.30.0
+starlette>=0.37.0
+fastapi>=0.115.0
+mangum>=0.17.0
