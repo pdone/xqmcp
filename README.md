@@ -5,11 +5,12 @@
 ## 功能特性
 
 - **56 个 API 接口** - 覆盖实时行情、财务数据、基金、指数等
-- **双协议支持** - MCP 协议（Streamable HTTP）+ REST API（通用调用）
-- **Streamable HTTP** - 使用标准 HTTP/HTTPS 协议，更好的兼容性
+- **双协议支持** - MCP 协议 + REST API，满足不同场景需求
+- **多传输方式** - 本地 stdio（推荐）+ 远程 Streamable HTTP（不推荐）
+- **本地优先** - stdio 模式无 session 限制，稳定性最佳
 - **Swagger 文档** - 自动生成，开箱即用
 - **API 认证** - 可选的 `x-api-key` 保护
-- **Serverless** - Vercel 一键部署，零运维
+- **一键部署** - 支持 Vercel Serverless 部署（REST API）
 
 ## 快速开始
 
@@ -53,6 +54,9 @@ python server.py
 
 部署后访问 `https://your-project.vercel.app/docs` 查看 Swagger 文档。
 
+> [!WARNING]
+> **Vercel** 部署的 MCP 服务由于 Serverless 环境的 session 限制，无法正常使用 MCP 协议的会话管理功能。**推荐使用本地 stdio 方式**运行 MCP 服务器，可获得更稳定的体验。Vercel 部署仅建议用于 REST API 调用。
+
 ## API 使用
 
 ### REST API
@@ -65,8 +69,13 @@ curl -X POST "https://your-project.vercel.app/api/search_stock" \
   -H "Content-Type: application/json" \
   -d '{"q": "贵州茅台"}'
 
-# 获取实时行情（带认证）
+# 获取实时行情（无需认证）
 curl -X POST "https://your-project.vercel.app/api/get_quote" \
+  -H "Content-Type: application/json" \
+  -d '{"symbol": "SH600519"}'
+
+# 获取主要指标（需要 XUEQIU_TOKEN）
+curl -X POST "https://your-project.vercel.app/api/get_main_indicator" \
   -H "Content-Type: application/json" \
   -H "x-api-key: your_api_key" \
   -d '{"symbol": "SH600519"}'
@@ -74,7 +83,57 @@ curl -X POST "https://your-project.vercel.app/api/get_quote" \
 
 ### MCP 协议
 
-使用 Streamable HTTP 传输协议，基于标准 HTTP/HTTPS 实现流式通信。
+支持两种传输方式：**本地 stdio（推荐）** 和 **远程 Streamable HTTP**。
+
+#### 方式一：本地 stdio（推荐）
+
+本地运行 MCP 服务器，无 session 限制，稳定性最佳。
+
+1. **获取代码**
+   ```bash
+   git clone https://github.com/pdone/xqmcp.git
+   cd xqmcp
+   ```
+
+2. **安装依赖**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **配置环境变量**
+   创建 `.env` 文件或设置系统环境变量：
+   ```bash
+   # 必填：雪球网 token
+   export XUEQIU_TOKEN=your_xueqiu_token
+   
+   # 可选：API 访问密钥
+   export API_TOKEN=your_api_key
+   ```
+
+4. **配置 Claude Desktop (`claude_desktop_config.json`)：**
+   ```json
+   {
+     "mcpServers": {
+       "pysnowball": {
+         "command": "python",
+         "args": ["path/to/stdio_server.py"],
+         "env": {
+           "XUEQIU_TOKEN": "your_xueqiu_token",
+           "API_TOKEN": "your_api_key"
+         }
+       }
+     }
+   }
+   ```
+
+5. **或配置 Claude Code CLI：**
+   ```bash
+   claude mcp add pysnowball -- python path/to/stdio_server.py
+   ```
+
+#### 方式二：远程 Streamable HTTP
+
+使用 HTTP/HTTPS 协议，适合远程访问场景。注意：Vercel 部署因 session 限制可能不稳定。
 
 **Claude Desktop (`claude_desktop_config.json`)：**
 ```json
@@ -144,6 +203,7 @@ xqmcp/
 │   ├── cube.py           # 组合数据
 │   └── suggest.py        # 搜索
 ├── mcp_server.py         # MCP 服务器核心
+├── stdio_server.py       # 本地 stdio 模式入口（推荐）
 ├── server.py             # FastAPI 服务器 + Swagger
 ├── vercel.json           # Vercel 部署配置
 ├── requirements.txt      # Python 依赖

@@ -14,17 +14,16 @@ def get_quote(symbol: str) -> dict:
     return safe_call(pysnowball.quotec, symbol)
 
 
-def get_kline(symbol: str, begin: int, period: str = "day", count: int = 100) -> dict:
+def get_kline(symbol: str, period: str = "day", count: int = 100) -> dict:
     """获取K线数据
 
     Args:
         symbol: 股票代码，格式为 市场前缀+代码，如 SH600519(上海)、SZ000001(深圳)、HK00700(港股)、USAAPL(美股)
-        begin: 开始时间戳(毫秒)
         period: 周期 day/week/month/quarter/year
         count: 数据条数
     """
     logger.info(f"获取K线: {symbol}, period={period}, count={count}")
-    return safe_call(pysnowball.kline, symbol, begin, period, count)
+    return safe_call(pysnowball.kline, symbol, period, count)
 
 
 def get_pankou(symbol: str) -> dict:

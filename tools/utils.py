@@ -39,5 +39,9 @@ def safe_call(func, *args, **kwargs):
         result = func(*args, **kwargs)
         return make_response(result)
     except Exception as e:
-        logger.error(f"调用 {func.__name__} 失败: {e}")
-        return make_response(None, error=str(e))
+        error_msg = str(e)
+        # 优化 TOKEN 错误提示
+        if "TOKEN" in error_msg or "token" in error_msg.lower():
+            error_msg = "未设置雪球TOKEN。请设置环境变量 XUEQIU_TOKEN（获取方式：登录雪球网 → F12 → Application → Cookies → xq_a_token）"
+        logger.error(f"调用 {func.__name__} 失败: {error_msg}")
+        return make_response(None, error=error_msg)
