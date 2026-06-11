@@ -1,42 +1,47 @@
 """组合数据工具模块"""
 
 import pysnowball
+from tools.utils import safe_call, logger
 
 
 def get_nav_daily(cube_symbol: str) -> dict:
     """获取组合每日净值
 
     Args:
-        cube_symbol: 组合代码
+        cube_symbol: 组合代码，如 SH600519
     """
-    return pysnowball.nav_daily(cube_symbol)
+    logger.info(f"获取组合每日净值: {cube_symbol}")
+    return safe_call(pysnowball.nav_daily, cube_symbol)
 
 
 def get_rebalancing_history(cube_symbol: str) -> dict:
     """获取组合调仓历史
 
     Args:
-        cube_symbol: 组合代码
+        cube_symbol: 组合代码，如 SH600519
     """
-    return pysnowball.rebalancing_history(cube_symbol)
+    logger.info(f"获取组合调仓历史: {cube_symbol}")
+    return safe_call(pysnowball.rebalancing_history, cube_symbol)
 
 
 def get_rebalancing_current(cube_symbol: str) -> dict:
     """获取组合当前持仓
 
     Args:
-        cube_symbol: 组合代码
+        cube_symbol: 组合代码，如 SH600519
     """
-    return pysnowball.rebalancing_current(cube_symbol)
+    logger.info(f"获取组合当前持仓: {cube_symbol}")
+    return safe_call(pysnowball.rebalancing_current, cube_symbol)
 
 
 def get_quote_current(code: str) -> dict:
     """获取组合当前报价
 
     Args:
-        code: 组合代码
+        code: 组合代码，如 SH600519
     """
-    return pysnowball.quote_current(code)
+    logger.info(f"获取组合当前报价: {code}")
+    return safe_call(pysnowball.quote_current, code)
 
 
 def register(mcp):

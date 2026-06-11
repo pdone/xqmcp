@@ -1,6 +1,7 @@
 """港股通数据工具模块"""
 
 import pysnowball
+from tools.utils import safe_call, logger
 
 
 def get_northbound_shareholding_sh(date: str = None) -> dict:
@@ -9,7 +10,8 @@ def get_northbound_shareholding_sh(date: str = None) -> dict:
     Args:
         date: 日期，格式 YYYY/MM/DD，默认今天
     """
-    return pysnowball.northbound_shareholding_sh(date)
+    logger.info(f"获取沪股通持股: {date}")
+    return safe_call(pysnowball.northbound_shareholding_sh, date)
 
 
 def get_northbound_shareholding_sz(date: str = None) -> dict:
@@ -18,7 +20,8 @@ def get_northbound_shareholding_sz(date: str = None) -> dict:
     Args:
         date: 日期，格式 YYYY/MM/DD，默认今天
     """
-    return pysnowball.northbound_shareholding_sz(date)
+    logger.info(f"获取深股通持股: {date}")
+    return safe_call(pysnowball.northbound_shareholding_sz, date)
 
 
 def register(mcp):

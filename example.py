@@ -54,7 +54,7 @@ async def example_mcp_protocol():
     # 这里需要服务器运行才能测试
     print("\n注意: 需要先启动服务器才能测试 MCP 协议调用")
     print("启动命令: python server.py")
-    print("然后使用 MCP 客户端连接: http://localhost:8000/api/mcp")
+    print("然后使用 MCP 客户端连接: http://localhost:8000/mcp")
 
 
 async def main():
