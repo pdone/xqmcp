@@ -6,6 +6,9 @@
 """
 
 import os
+from dotenv import load_dotenv
+load_dotenv(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env"))
+
 import uvicorn
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
@@ -13,7 +16,10 @@ from contextlib import asynccontextmanager
 from starlette.types import ASGIApp, Scope, Receive, Send
 
 from common import register_all_endpoints, ROOT_HTML
-from mcp_server import mcp
+from mcp_server import create_mcp_server
+
+# 本地开发服务器使用有状态模式（支持 session 管理）
+mcp = create_mcp_server(stateless=False)
 
 
 # ============================================================

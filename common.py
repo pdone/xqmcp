@@ -80,7 +80,7 @@ def register_endpoint(app: FastAPI, func, tag: str):
         try:
             return func(**kwargs)
         except Exception as e:
-            return {"error": str(e)}
+            return {"success": False, "error": str(e), "data": None}
 
     # 重建签名
     new_params = []

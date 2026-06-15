@@ -19,12 +19,12 @@ from mcp_server import mcp
 
 
 # ============================================================
-# FastAPI 应用（带 MCP lifespan）
+# FastAPI 应用（无状态模式）
 # ============================================================
 
 @asynccontextmanager
 async def lifespan(app):
-    """启动 MCP session manager"""
+    """启动 MCP session manager（即使是无状态模式也需要初始化）"""
     async with mcp.session_manager.run():
         yield
 

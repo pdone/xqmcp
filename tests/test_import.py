@@ -3,7 +3,7 @@
 import sys
 import os
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 def test_imports():
     """测试导入"""
@@ -26,9 +26,15 @@ def test_tools():
         count = len(tools)
         print(f"  OK - 已注册 {count} 个工具")
 
+        # 核心工具列表（每个分类至少一个代表）
         expected_tools = [
-            "get_quote", "get_kline", "get_balance", "get_income",
-            "get_fund_detail", "search_stock", "get_convertible_bond"
+            "get_quote",           # 实时行情
+            "get_balance",         # 财务数据
+            "get_income",          # 财务数据
+            "get_fund_detail",     # 基金数据
+            "search_stock",        # 搜索
+            "get_convertible_bond", # 债券数据
+            "get_capital_flow",    # 资金流向
         ]
 
         for tool in expected_tools:

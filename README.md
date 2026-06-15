@@ -4,9 +4,9 @@
 
 ## 功能特性
 
-- **56 个 API 接口** - 覆盖实时行情、财务数据、基金、指数等
+- **51 个 API 接口** - 覆盖实时行情、财务数据、基金、指数等
 - **双协议支持** - MCP 协议 + REST API，满足不同场景需求
-- **多传输方式** - 本地 stdio（推荐）+ 远程 Streamable HTTP（不推荐）
+- **多传输方式** - 本地 stdio（推荐）+ 远程 Streamable HTTP（无状态）
 - **本地优先** - stdio 模式无 session 限制，稳定性最佳
 - **Swagger 文档** - 自动生成，开箱即用
 - **API 认证** - 可选的 `x-api-key` 保护
@@ -54,8 +54,8 @@ python server.py
 
 部署后访问 `https://your-project.vercel.app/docs` 查看 Swagger 文档。
 
-> [!WARNING]
-> **Vercel** 部署的 MCP 服务由于 Serverless 环境的 session 限制，无法正常使用 MCP 协议的会话管理功能。**推荐使用本地 stdio 方式**运行 MCP 服务器，可获得更稳定的体验。Vercel 部署仅建议用于 REST API 调用。
+> [!NOTE]
+> **Vercel** 部署已启用 MCP 无状态模式（`stateless_http=True`），无需 session 管理，可正常使用 MCP 协议。每个请求独立处理，不依赖会话状态。
 
 ## API 使用
 
@@ -116,7 +116,7 @@ curl -X POST "https://your-project.vercel.app/api/get_main_indicator" \
      "mcpServers": {
        "pysnowball": {
          "command": "python",
-         "args": ["path/to/stdio_server.py"],
+         "args": ["path/to/stdio.py"],
          "env": {
            "XUEQIU_TOKEN": "your_xueqiu_token",
            "API_TOKEN": "your_api_key"
@@ -128,12 +128,12 @@ curl -X POST "https://your-project.vercel.app/api/get_main_indicator" \
 
 5. **或配置 Claude Code CLI：**
    ```bash
-   claude mcp add pysnowball -- python path/to/stdio_server.py
+   claude mcp add pysnowball -- python path/to/stdio.py
    ```
 
 #### 方式二：远程 Streamable HTTP
 
-使用 HTTP/HTTPS 协议，适合远程访问场景。注意：Vercel 部署因 session 限制可能不稳定。
+使用 HTTP/HTTPS 协议，适合远程访问场景。Vercel 部署已支持无状态模式，可正常使用。
 
 **Claude Desktop (`claude_desktop_config.json`)：**
 ```json
@@ -168,7 +168,7 @@ claude mcp add pysnowball --transport http https://your-project.vercel.app/mcp -
 
 | 分类 | 接口数 | 示例接口 |
 |------|--------|----------|
-| 实时行情 | 4 | `get_quote`, `get_kline`, `get_pankou` |
+| 实时行情 | 3 | `get_quote`, `get_pankou`, `get_quote_detail` |
 | 财务数据 | 9 | `get_balance`, `get_income`, `get_cash_flow` |
 | 基本面 | 11 | `get_holders`, `get_top_holders`, `get_bonus` |
 | 资金流向 | 5 | `get_capital_flow`, `get_margin` |
@@ -178,7 +178,6 @@ claude mcp add pysnowball --transport http https://your-project.vercel.app/mcp -
 | 债券数据 | 1 | `get_convertible_bond` |
 | 港股通 | 2 | `get_northbound_shareholding_sh/sz` |
 | 用户数据 | 2 | `get_watch_list`, `get_watch_stock` |
-| 组合数据 | 4 | `get_nav_daily`, `get_rebalancing_current` |
 | 搜索 | 1 | `search_stock` |
 
 > 完整接口文档请访问 Swagger UI: `/docs`
@@ -200,11 +199,12 @@ xqmcp/
 │   ├── bond.py           # 债券数据
 │   ├── hkex.py           # 港股通
 │   ├── user.py           # 用户数据
-│   ├── cube.py           # 组合数据
+│   ├── cube.py           # 组合数据（已清空，工具已移除）
 │   └── suggest.py        # 搜索
 ├── mcp_server.py         # MCP 服务器核心
-├── stdio_server.py       # 本地 stdio 模式入口（推荐）
+├── stdio.py              # 本地 stdio 模式入口（推荐）
 ├── server.py             # FastAPI 服务器 + Swagger
+├── tests/                # 测试脚本
 ├── vercel.json           # Vercel 部署配置
 ├── requirements.txt      # Python 依赖
 └── runtime.txt           # Python 版本

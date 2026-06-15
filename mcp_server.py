@@ -22,13 +22,18 @@ from tools import (
 )
 
 
-def create_mcp_server() -> FastMCP:
-    """创建并配置 MCP 服务器"""
+def create_mcp_server(stateless: bool = False) -> FastMCP:
+    """创建并配置 MCP 服务器
+
+    Args:
+        stateless: 是否启用无状态模式。Vercel 等 Serverless 环境需要设置为 True。
+    """
 
     mcp = FastMCP(
         "pysnowball",
         instructions="雪球股票数据接口 MCP 服务器，提供 A 股/港股/美股的实时行情、财务数据、基金信息等",
         streamable_http_path="/",
+        stateless_http=stateless,
         transport_security=TransportSecuritySettings(
             enable_dns_rebinding_protection=False,
         ),
@@ -56,5 +61,5 @@ def create_mcp_server() -> FastMCP:
     return mcp
 
 
-# 创建全局 MCP 实例
-mcp = create_mcp_server()
+# 创建全局 MCP 实例（Vercel Serverless 环境使用无状态模式）
+mcp = create_mcp_server(stateless=True)
